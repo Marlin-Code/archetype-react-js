@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  ProductionWebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      WebsiteConfiguration:
+        IndexDocument: index.html
+  ProductionWebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref ProductionWebsiteBucket
+      PolicyDocument:
+        Statement:
+          Action:
+            - s3:GetObject
+          Effect: Allow
+          Resource: 
+            - !Sub arn:aws:s3:::${ProductionWebsiteBucket}/*
+          Principal:
+            "Service": "cloudfront.amazonaws.com"
+  ProductionOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Description: OAC for restricting access to website s3 bucket.
+        Name: production-website-oac
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+  ProductionCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties: 
+      CachePolicyConfig:
+        DefaultTTL: 43200
+        MaxTTL: 86400
+        MinTTL: 3600
+        Name: ProductionCachePolicy
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip:
+            false
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+  ProductionCloudfrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt ProductionWebsiteBucket.DomainName
+            OriginAccessControlId: !GetAtt ProductionOriginAccessControl.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          CachePolicyId: !Ref ProductionCachePolicy
+          AllowedMethods: 
+            - GET
+            - HEAD
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+        Enabled: true
+        DefaultRootObject: index.html
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+
+Outputs:
+  DomainName:
+    Value: !GetAtt ProductionWebsiteBucket.DomainName
+  OAC:
+    Value: !GetAtt ProductionOriginAccessControl.Id
+  CachePolicy:
+    Value: !Ref ProductionCachePolicy
