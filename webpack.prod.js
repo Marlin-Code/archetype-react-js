@@ -8,7 +8,7 @@ module.exports={
     devtool: "source-map",
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "bundle.js"
+        filename: "[name].[contenthash].js"
     },
     target: "web",
     resolve: {

@@ -9,11 +9,9 @@
     "build": "webpack --config webpack.prod.js",
     "predeploy": "./scripts/pre_deploy.sh",
     "deploy": "aws s3 cp --recursive ./dist s3://$npm_package_config_deploymentBucket/",
-    "postdeploy": "aws cloudfront create-invalidation --distribution-id $npm_package_config_cloudfrontDistribution --paths \"/*\""
   },
   "config": {
     "deploymentBucket": "marlin-react-frontend-module-websitebucket-pspi19ekpeqt",
-    "cloudfrontDistribution": "E1AIE8P6XNZXQ5"
   },
   "author": "@Marlin-Code",
   "license": "MIT",
