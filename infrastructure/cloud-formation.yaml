@@ -28,14 +28,31 @@ Resources:
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
-  CachePolicy:
+  DefaultCachePolicy:
     Type: AWS::CloudFront::CachePolicy
     Properties: 
       CachePolicyConfig:
         DefaultTTL: 43200
         MaxTTL: 86400
         MinTTL: 3600
-        Name: CachePolicy
+        Name: DefaultCachePolicy
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingGzip:
+            false
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+  IndexCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        DefaultTTL: 0
+        MaxTTL: 0
+        MinTTL: 0
+        Name: IndexCachePolicy
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
@@ -49,6 +66,14 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        CacheBehaviors:
+          - CachePolicyId: !Ref IndexCachePolicy
+            AllowedMethods:
+              - GET
+              - HEAD
+            PathPattern: index.html
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
         Origins:
           - Id: S3Origin
             DomainName: !GetAtt WebsiteBucket.DomainName
@@ -56,7 +81,7 @@ Resources:
             S3OriginConfig:
               OriginAccessIdentity: ''
         DefaultCacheBehavior:
-          CachePolicyId: !Ref CachePolicy
+          CachePolicyId: !Ref DefaultCachePolicy
           AllowedMethods: 
             - GET
             - HEAD
