@@ -8,10 +8,10 @@
     "prebuild": "rm -rf dist",
     "build": "webpack --config webpack.prod.js",
     "predeploy": "./scripts/pre_deploy.sh",
-    "deploy": "aws s3 cp --recursive ./dist s3://$npm_package_config_deploymentBucket/",
+    "deploy": "aws s3 cp --recursive ./dist s3://$npm_package_config_deploymentBucket/"
   },
   "config": {
-    "deploymentBucket": "marlin-react-frontend-module-websitebucket-pspi19ekpeqt",
+    "deploymentBucket": "marlin-react-frontend-module-websitebucket-pspi19ekpeqt"
   },
   "author": "@Marlin-Code",
   "license": "MIT",
