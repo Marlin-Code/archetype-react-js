@@ -1,41 +1,41 @@
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
-  ProductionWebsiteBucket:
+  WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: Private
       WebsiteConfiguration:
         IndexDocument: index.html
-  ProductionWebsiteBucketPolicy:
+  WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties: 
-      Bucket: !Ref ProductionWebsiteBucket
+      Bucket: !Ref WebsiteBucket
       PolicyDocument:
         Statement:
           Action:
             - s3:GetObject
           Effect: Allow
           Resource: 
-            - !Sub arn:aws:s3:::${ProductionWebsiteBucket}/*
+            - !Sub arn:aws:s3:::${WebsiteBucket}/*
           Principal:
             "Service": "cloudfront.amazonaws.com"
-  ProductionOriginAccessControl:
+  OriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
       OriginAccessControlConfig:
         Description: OAC for restricting access to website s3 bucket.
-        Name: production-website-oac
+        Name: website-oac
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
-  ProductionCachePolicy:
+  CachePolicy:
     Type: AWS::CloudFront::CachePolicy
     Properties: 
       CachePolicyConfig:
         DefaultTTL: 43200
         MaxTTL: 86400
         MinTTL: 3600
-        Name: ProductionCachePolicy
+        Name: CachePolicy
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
@@ -45,18 +45,18 @@ Resources:
             HeaderBehavior: none
           QueryStringsConfig:
             QueryStringBehavior: none
-  ProductionCloudfrontDistribution:
+  CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Origins:
           - Id: S3Origin
-            DomainName: !GetAtt ProductionWebsiteBucket.DomainName
-            OriginAccessControlId: !GetAtt ProductionOriginAccessControl.Id
+            DomainName: !GetAtt WebsiteBucket.DomainName
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
             S3OriginConfig:
               OriginAccessIdentity: ''
         DefaultCacheBehavior:
-          CachePolicyId: !Ref ProductionCachePolicy
+          CachePolicyId: !Ref CachePolicy
           AllowedMethods: 
             - GET
             - HEAD
@@ -68,9 +68,7 @@ Resources:
           CloudFrontDefaultCertificate: true
 
 Outputs:
-  DomainName:
-    Value: !GetAtt ProductionWebsiteBucket.DomainName
-  OAC:
-    Value: !GetAtt ProductionOriginAccessControl.Id
-  CachePolicy:
-    Value: !Ref ProductionCachePolicy
+  BucketName:
+    Value: !Ref WebsiteBucket
+  WebsiteUrl:
+    Value: !GetAtt CloudFrontDistribution.DomainName
