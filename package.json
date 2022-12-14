@@ -4,6 +4,7 @@
   "description": "Basic Template for a Marlin Frontend Module using React with hosting in Cloudformation and s3",
   "main": "src/index.js",
   "scripts": {
+    "deploy_infrastructure": "aws cloudformation deploy --template-file ./infrastructure/cloud-formation.yaml --stack-name $npm_package_config_cloudFormationStackName",
     "start": "webpack serve --config webpack.dev.js",
     "prebuild": "rm -rf dist",
     "build": "webpack --config webpack.prod.js",
@@ -11,7 +12,8 @@
     "deploy": "aws s3 cp --recursive ./dist s3://$npm_package_config_deploymentBucket/"
   },
   "config": {
-    "deploymentBucket": "marlin-react-frontend-module-websitebucket-pspi19ekpeqt"
+    "deploymentBucket": "marlin-react-frontend-module-websitebucket-pspi19ekpeqt",
+    "cloudFormationStackName": "marlin-react-frontend-module"
   },
   "author": "@Marlin-Code",
   "license": "MIT",
