@@ -24,7 +24,7 @@ Resources:
     Properties:
       OriginAccessControlConfig:
         Description: OAC for restricting access to website s3 bucket.
-        Name: website-oac
+        Name: !Sub ${AWS::StackName}-website-oac
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
@@ -35,7 +35,7 @@ Resources:
         DefaultTTL: 43200
         MaxTTL: 86400
         MinTTL: 3600
-        Name: DefaultCachePolicy
+        Name: !Sub ${AWS::StackName}-DefaultCachePolicy
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
@@ -52,7 +52,7 @@ Resources:
         DefaultTTL: 0
         MaxTTL: 0
         MinTTL: 0
-        Name: IndexCachePolicy
+        Name: !Sub ${AWS::StackName}-IndexCachePolicy
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
             CookieBehavior: none
