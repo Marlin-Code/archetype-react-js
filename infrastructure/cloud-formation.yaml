@@ -6,6 +6,7 @@ Resources:
       AccessControl: Private
       WebsiteConfiguration:
         IndexDocument: index.html
+        ErrorDocument: index.html
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties: 
@@ -89,6 +90,12 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         Enabled: true
         DefaultRootObject: index.html
+        # This allows us to serve everything in our React app through index
+        CustomErrorResponses: 
+          - ErrorCode: 403
+            ErrorCachingMinTTL: 0
+            ResponseCode: 200
+            ResponsePagePath: /index.html
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
 
