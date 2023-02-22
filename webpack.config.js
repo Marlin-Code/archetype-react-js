@@ -28,7 +28,7 @@ module.exports={
                 use:  'babel-loader'
             },
             {
-                test: /\.svg$/i,
+                test: /\.(svg|mp4|jpg|png)$/i,
                 use: ["file-loader"],
             },
             {
