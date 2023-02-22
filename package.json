@@ -7,9 +7,9 @@
     "predeploy_infrastructure": "./scripts/pre_deploy_infrastructure.sh",
     "deploy_infrastructure": "aws cloudformation deploy --template-file ./infrastructure/cloud-formation.yaml --stack-name $npm_package_config_cloudFormationStackName",
     "postdeploy_infrastructure": "./scripts/post_deploy_infrastructure.sh",
-    "start": "webpack serve --config webpack.dev.js",
+    "start": "webpack serve --config webpack.config.js",
     "prebuild": "rm -rf dist",
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.config.js",
     "predeploy": "./scripts/pre_deploy.sh",
     "deploy": "aws s3 cp --recursive ./dist s3://$npm_package_config_deploymentBucket/"
   },
